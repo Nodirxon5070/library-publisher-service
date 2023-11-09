@@ -1,6 +1,7 @@
 package com.company.publisherservice.service.mapper;
 
-import com.company.publisherservice.dto.PublisherDto;
+import com.company.publisherservice.dto.request.PublisherRequestDto;
+import com.company.publisherservice.dto.response.PublisherResponseDto;
 import com.company.publisherservice.modul.Publisher;
 import org.mapstruct.*;
 
@@ -8,14 +9,12 @@ import org.mapstruct.*;
 public abstract class PublisherMapper {
 
 
-    public abstract PublisherDto toDto(Publisher publisher);
+    public abstract PublisherResponseDto toDto(Publisher publisher);
 
-    @Mapping(target = "createdAt",ignore = true)
-    @Mapping(target = "updatedAt",ignore = true)
-    @Mapping(target = "deletedAt",ignore = true)
-    public abstract Publisher toEntity(PublisherDto dto);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    public abstract void updatePublisherFromDto(Publisher publisher,@MappingTarget PublisherDto dto);
+    public abstract Publisher toEntity(PublisherRequestDto dto);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,resultType = Publisher.class)
+    public abstract Publisher updatePublisherFromDto(@MappingTarget Publisher publisher, PublisherRequestDto dto);
 
 }

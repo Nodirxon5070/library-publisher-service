@@ -1,37 +1,27 @@
 package com.company.publisherservice.controller;
 
-import com.company.publisherservice.dto.PublisherDto;
 import com.company.publisherservice.dto.ResponseDto;
 import com.company.publisherservice.dto.SimpleCRUD;
+import com.company.publisherservice.dto.request.PublisherRequestDto;
+import com.company.publisherservice.dto.response.PublisherResponseDto;
 import com.company.publisherservice.service.PublisherService;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.info.License;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@OpenAPIDefinition(
-        tags = @Tag(name = "Publisher tag"),
-        info = @Info(
-                title = "Library Project",
-                description = "Making changes on Publisher class",
-                contact = @Contact(
-                        name = "Library project",
-                        url = "https://t.me/xan_5070",
-                        email = "nodirxon5070@gmail.com"
-                ),
-                license = @License(name = "Publisher License",
-                        url = "https://t.me/xan_5070")
-        )
-)
+import static com.company.publisherservice.constants.Constants.EXAMPLE_PUBLISHER_NOT_FOUND;
+import static com.company.publisherservice.constants.Constants.EXAMPLE_PUBLISHER_SUCCESS;
+import static com.company.publisherservice.constants.SimpleResponseDto.convertStatusCodeByData;
+
 @RestController
 @RequestMapping(value = "publisher")
-public class PublisherController implements SimpleCRUD<Integer, PublisherDto> {
+public class PublisherController implements SimpleCRUD<Integer, PublisherResponseDto, PublisherRequestDto> {
 
     @Autowired
     private PublisherService publisherService;
@@ -47,9 +37,42 @@ public class PublisherController implements SimpleCRUD<Integer, PublisherDto> {
                     )
             )
     )
+    @ApiResponses(value={
+            @ApiResponse(
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_SUCCESS)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            )
+
+    })
     @PostMapping(value = "/create")
-    public ResponseDto<PublisherDto> create(@RequestBody PublisherDto dto) {
-        return this.publisherService.create(dto);
+    public ResponseEntity<ResponseDto<PublisherResponseDto>> create(@RequestBody PublisherRequestDto dto) {
+        return convertStatusCodeByData(this.publisherService.create(dto));
     }
 
     @Override
@@ -63,9 +86,42 @@ public class PublisherController implements SimpleCRUD<Integer, PublisherDto> {
                     )
             )
     )
+    @ApiResponses(value={
+            @ApiResponse(
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_SUCCESS)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            )
+
+    })
     @GetMapping(value = "/get/{id}")
-    public ResponseDto<PublisherDto> get(@PathVariable(value = "id") Integer entityId) {
-        return this.publisherService.get(entityId);
+    public ResponseEntity<ResponseDto<PublisherResponseDto>> get(@PathVariable(value = "id") Integer entityId) {
+        return convertStatusCodeByData(this.publisherService.get(entityId));
     }
 
     @Override
@@ -79,9 +135,42 @@ public class PublisherController implements SimpleCRUD<Integer, PublisherDto> {
                     )
             )
     )
+    @ApiResponses(value={
+            @ApiResponse(
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_SUCCESS)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            )
+
+    })
     @PutMapping(value = "/update/{id}")
-    public ResponseDto<PublisherDto> update(@PathVariable(value = "id") Integer entityId,@RequestBody PublisherDto dto) {
-        return this.publisherService.update(entityId,dto);
+    public ResponseEntity<ResponseDto<PublisherResponseDto>> update(@PathVariable(value = "id") Integer entityId, @RequestBody PublisherRequestDto dto) {
+        return convertStatusCodeByData(this.publisherService.update(entityId,dto));
     }
 
     @Override
@@ -95,8 +184,41 @@ public class PublisherController implements SimpleCRUD<Integer, PublisherDto> {
                     )
             )
     )
+    @ApiResponses(value={
+            @ApiResponse(
+                    responseCode = "200",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_SUCCESS)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    examples = @ExampleObject(value = EXAMPLE_PUBLISHER_NOT_FOUND)
+                            )
+                    }
+
+            )
+
+    })
     @DeleteMapping(value = "/delete/{id}")
-    public ResponseDto<PublisherDto> delete(@PathVariable(value = "id") Integer entityId) {
-        return this.publisherService.delete(entityId);
+    public ResponseEntity<ResponseDto<PublisherResponseDto>> delete(@PathVariable(value = "id") Integer entityId) {
+        return convertStatusCodeByData(this.publisherService.delete(entityId));
     }
 }

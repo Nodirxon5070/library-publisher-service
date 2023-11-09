@@ -1,36 +1,38 @@
 package com.company.publisherservice.service;
 
 
-import com.company.publisherservice.dto.PublisherDto;
 import com.company.publisherservice.dto.ResponseDto;
-import com.company.publisherservice.dto.SimpleCRUD;
+import com.company.publisherservice.dto.request.PublisherRequestDto;
+import com.company.publisherservice.dto.response.PublisherResponseDto;
 import com.company.publisherservice.modul.Publisher;
 import com.company.publisherservice.repository.PublisherRepository;
 import com.company.publisherservice.service.mapper.PublisherMapper;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 
 @Service
-public record PublisherService(PublisherRepository publisherRepository,
-                               PublisherMapper publisherMapper
-                               )
-        implements SimpleCRUD<Integer, PublisherDto> {
-    @Override
-    public ResponseDto<PublisherDto> create(@Valid PublisherDto dto) {
+@RequiredArgsConstructor
+public class PublisherService {
+
+    private final PublisherRepository publisherRepository;
+    private final PublisherMapper publisherMapper;
+
+    public ResponseDto<PublisherResponseDto> create(@Valid PublisherRequestDto dto) {
         try{
             Publisher publisher = this.publisherMapper.toEntity(dto);
             publisher.setCreatedAt(LocalDateTime.now());
             this.publisherRepository.save(publisher);
-            return ResponseDto.<PublisherDto>builder()
+            return ResponseDto.<PublisherResponseDto>builder()
                     .data(this.publisherMapper.toDto(publisher))
                     .message("OK")
                     .success(true)
                     .build();
         }catch (Exception e){
-            return ResponseDto.<PublisherDto>builder()
+            return ResponseDto.<PublisherResponseDto>builder()
                     .code(-2)
                     .message(String.format("publisher save while error %s",e.getMessage()))
                     .build();
@@ -38,16 +40,15 @@ public record PublisherService(PublisherRepository publisherRepository,
 
     }
 
-    @Override
-    public ResponseDto<PublisherDto> get(@Valid Integer entityId) {
+    public ResponseDto<PublisherResponseDto> get(@Valid Integer entityId) {
         return publisherRepository.findByPublisherIdAndDeletedAtIsNull(entityId)
                 .map(publisher ->
-                     ResponseDto.<PublisherDto>builder()
+                     ResponseDto.<PublisherResponseDto>builder()
                             .message("OK")
                             .success(true)
                             .data(this.publisherMapper.toDto(publisher))
                             .build()
-                ).orElse(ResponseDto.<PublisherDto>builder()
+                ).orElse(ResponseDto.<PublisherResponseDto>builder()
                         .message("Publisher is not found!")
                         .code(-1)
                         .build());
@@ -55,43 +56,41 @@ public record PublisherService(PublisherRepository publisherRepository,
 
     }
 
-    @Override
-    public ResponseDto<PublisherDto> update(@Valid Integer entityId, PublisherDto dto) {
+    public ResponseDto<PublisherResponseDto> update(@Valid Integer entityId, PublisherRequestDto dto) {
         try {
             return this.publisherRepository.findByPublisherIdAndDeletedAtIsNull(entityId)
                     .map(publisher -> {
                         this.publisherMapper.updatePublisherFromDto(publisher,dto);
                         publisher.setUpdatedAt(LocalDateTime.now());
                         this.publisherRepository.save(publisher);
-                        return ResponseDto.<PublisherDto>builder()
+                        return ResponseDto.<PublisherResponseDto>builder()
                                 .success(true)
                                 .message("OK")
                                 .data(this.publisherMapper.toDto(publisher))
                                 .build();
-                    }).orElse(ResponseDto.<PublisherDto>builder()
+                    }).orElse(ResponseDto.<PublisherResponseDto>builder()
                             .code(-1)
                             .message("Publisher is not found")
                             .build());
         }catch (Exception e){
-            return ResponseDto.<PublisherDto>builder()
+            return ResponseDto.<PublisherResponseDto>builder()
                     .message(String.format("Publisher while updating error %s",e))
                     .code(-2)
                     .build();
         }
     }
 
-    @Override
-    public ResponseDto<PublisherDto> delete(@Valid Integer entityId) {
+    public ResponseDto<PublisherResponseDto> delete(@Valid Integer entityId) {
         return this.publisherRepository.findByPublisherIdAndDeletedAtIsNull(entityId)
                 .map(publisher -> {
                     publisher.setDeletedAt(LocalDateTime.now());
                     this.publisherRepository.save(publisher);
-                    return ResponseDto.<PublisherDto>builder()
+                    return ResponseDto.<PublisherResponseDto>builder()
                             .success(true)
                             .message("OK")
                             .data(this.publisherMapper.toDto(publisher))
                             .build();
-                }).orElse(ResponseDto.<PublisherDto>builder()
+                }).orElse(ResponseDto.<PublisherResponseDto>builder()
                         .code(-1)
                         .message("Publisher is not found!")
                         .build());
